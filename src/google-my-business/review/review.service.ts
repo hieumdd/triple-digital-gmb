@@ -28,10 +28,10 @@ export const getReviews = async (
     };
 
     return _get()
-        .then((rows) => rows.map((row) => ({ ...row, accountId, locationId })))
+        .then((rows) => (rows || []).map((row) => ({ ...row, accountId, locationId })))
         .catch((err) => {
             if (axios.isAxiosError(err) && err.response?.status === 403) {
-                console.log(JSON.stringify({ locationId }));
+                console.debug({ resource: 'insight', locationId });
                 return [];
             }
             return Promise.reject(err);

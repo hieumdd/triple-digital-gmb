@@ -53,9 +53,8 @@ export const getInsights = (
                 'dailyRange.end_date.day': end.date(),
             },
         })
-        .then((res) => res.data)
-        .then((data) =>
-            data.timeSeries.datedValues.map(({ date, value }) => ({
+        .then(({ data }) => {
+            return data.timeSeries.datedValues.map(({ date, value }) => ({
                 location_id: locationId,
                 metric: dailyMetric,
                 date: dayjs()
@@ -64,11 +63,11 @@ export const getInsights = (
                     .date(date.day)
                     .format('YYYY-MM-DD'),
                 value,
-            })),
-        )
+            }));
+        })
         .catch((err) => {
             if (axios.isAxiosError(err) && err.response?.status === 403) {
-                console.log(JSON.stringify({ locationId, dailyMetric }));
+                console.debug({ resource: 'insight', locationId });
                 return [];
             }
 

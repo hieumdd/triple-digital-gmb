@@ -1,3 +1,4 @@
+import { setTimeout } from 'node:timers/promises';
 import axios from 'axios';
 import axiosThrottle from 'axios-request-throttle';
 
@@ -11,11 +12,9 @@ const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 export const getToken = async () => {
     const [clientId, clientSecret, refreshToken] = await Promise.all(
-        [
-            'GOOGLE_CLIENT_ID',
-            'GOOGLE_CLIENT_SECRET',
-            'GOOGLE_REFRESH_TOKEN',
-        ].map((name) => getSecret(name)),
+        ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN'].map((name) =>
+            getSecret(name),
+        ),
     );
 
     return axios
@@ -33,8 +32,8 @@ export const getToken = async () => {
         .then((res) => res.data);
 };
 
-export const getAuthClient = async () =>
-    getToken().then(({ access_token: token }) => {
+export const getAuthClient = async () => {
+    return getToken().then(({ access_token: token }) => {
         const client = axios.create({
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -44,5 +43,19 @@ export const getAuthClient = async () =>
 
         axiosThrottle.use(axios, { requestsPerSecond: 8 });
 
+        client.interceptors.response.use(
+            (response) => response,
+            async (response) => {
+                if (response.response?.status === 429) {
+                    await setTimeout(1000);
+                    console.warn('429');
+                    return client.request(response.response.config);
+                }
+
+                throw response;
+            },
+        );
+
         return client;
     });
+};
