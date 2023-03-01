@@ -4,8 +4,8 @@ import { pipeline } from './pipeline.service';
 
 it('account/%p', async () => {
     const options = {
-        start: '2022-01-01',
-        end: '2023-02-01',
+        start: '2023-02-03',
+        end: '2023-03-01',
     };
 
     return pipeline(options)

@@ -10,7 +10,12 @@ import { locationSchema, insightSchema, reviewSchema } from './pipeline.schema';
 
 dayjs.extend(utc);
 
-const ACCOUNT_IDS = ['115324377183730361037', '101639889557293298089', '117769832391951880951'];
+const ACCOUNT_IDS = [
+    '115324377183730361037',
+    '101639889557293298089',
+    '117769832391951880951',
+    '100912317766210055468',
+];
 
 type PipelineOptions = {
     start?: string;
