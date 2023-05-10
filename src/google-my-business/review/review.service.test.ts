@@ -12,7 +12,7 @@ describe('Review', () => {
         client = await getAuthClient();
     });
 
-    it('Get Reviews', async () => {
+    it('get-reviews', async () => {
         return getReviews(client, { accountId, locationId })
             .then((reviews) => {
                 console.log(reviews);
@@ -20,8 +20,9 @@ describe('Review', () => {
                     expect(review).toBeTruthy();
                 });
             })
-            .catch((err) => {
-                console.log(err);
+            .catch((error) => {
+                console.log(error);
+                return Promise.reject(error);
             });
     });
 });

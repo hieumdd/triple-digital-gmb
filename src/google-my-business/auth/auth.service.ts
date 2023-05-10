@@ -41,20 +41,7 @@ export const getAuthClient = async () => {
             },
         });
 
-        axiosThrottle.use(axios, { requestsPerSecond: 8 });
-
-        client.interceptors.response.use(
-            (response) => response,
-            async (response) => {
-                if (response.response?.status === 429) {
-                    await setTimeout(1000);
-                    console.warn('429');
-                    return client.request(response.response.config);
-                }
-
-                throw response;
-            },
-        );
+        axiosThrottle.use(axios, { requestsPerSecond: 5 });
 
         return client;
     });

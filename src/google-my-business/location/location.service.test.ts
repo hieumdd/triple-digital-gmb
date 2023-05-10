@@ -11,7 +11,7 @@ describe('Location', () => {
         client = await getAuthClient();
     });
 
-    it('Get Locations', async () => {
+    it('get-locations', async () => {
         return getLocations(client, { accountId })
             .then((locations) => {
                 console.log(locations);

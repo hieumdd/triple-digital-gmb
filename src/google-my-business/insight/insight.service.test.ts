@@ -2,13 +2,9 @@ import { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
 import { getAuthClient } from '../auth/auth.service';
-import { DailyMetric, getInsights } from './insight.service';
+import { getInsights } from './insight.service';
 
-const dailyMetricCases = Object.values(DailyMetric).map((metric) => [
-    metric,
-]) as DailyMetric[][];
-
-describe('Insight', () => {
+describe('insights', () => {
     let client: AxiosInstance;
     const locationId = `142668089757793218`;
 
@@ -16,22 +12,21 @@ describe('Insight', () => {
         client = await getAuthClient();
     });
 
-    it.each(dailyMetricCases)('Get Insights %s', async (dailyMetric) => {
-        const start = dayjs('2022-09-01');
-        const end = dayjs('2022-10-01');
+    it('get-insights', async () => {
+        const start = dayjs('2022-01-01');
+        const end = dayjs('2023-01-01');
 
-        return getInsights(client, { locationId, dailyMetric, start, end })
+        return getInsights(client, { locationId, start, end })
             .then((insights) => {
                 console.log(insights);
                 insights.forEach((insight) => {
                     expect(insight.location_id).toBe(locationId);
-                    expect(insight.metric).toBe(dailyMetric);
                     expect(insight.date).toBeTruthy();
                 });
             })
-            .catch((err) => {
-                console.log(err);
-                return Promise.reject(err);
+            .catch((error) => {
+                console.error(error);
+                return Promise.reject(error);
             });
     });
 });

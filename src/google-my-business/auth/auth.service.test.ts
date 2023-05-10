@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { getToken } from './auth.service';
 
-it('Get Token', async () => {
+it('get-token', async () => {
     return getToken()
         .then((res) => {
             console.log(res.access_token);
