@@ -3,17 +3,17 @@ import dayjs, { Dayjs } from 'dayjs';
 
 export enum DailyMetric {
     // DAILY_METRIC_UNKNOWN = "DAILY_METRIC_UNKNOWN",
-    BUSINESS_IMPRESSIONS_DESKTOP_MAPS = "BUSINESS_IMPRESSIONS_DESKTOP_MAPS",
-    BUSINESS_IMPRESSIONS_DESKTOP_SEARCH = "BUSINESS_IMPRESSIONS_DESKTOP_SEARCH",
-    BUSINESS_IMPRESSIONS_MOBILE_MAPS = "BUSINESS_IMPRESSIONS_MOBILE_MAPS",
-    BUSINESS_IMPRESSIONS_MOBILE_SEARCH = "BUSINESS_IMPRESSIONS_MOBILE_SEARCH",
-    BUSINESS_CONVERSATIONS = "BUSINESS_CONVERSATIONS",
-    BUSINESS_DIRECTION_REQUESTS = "BUSINESS_DIRECTION_REQUESTS",
-    CALL_CLICKS = "CALL_CLICKS",
-    WEBSITE_CLICKS = "WEBSITE_CLICKS",
-    BUSINESS_BOOKINGS = "BUSINESS_BOOKINGS",
-    BUSINESS_FOOD_ORDERS = "BUSINESS_FOOD_ORDERS",
-    BUSINESS_FOOD_MENU_CLICKS = "BUSINESS_FOOD_MENU_CLICKS",
+    BUSINESS_IMPRESSIONS_DESKTOP_MAPS = 'BUSINESS_IMPRESSIONS_DESKTOP_MAPS',
+    BUSINESS_IMPRESSIONS_DESKTOP_SEARCH = 'BUSINESS_IMPRESSIONS_DESKTOP_SEARCH',
+    BUSINESS_IMPRESSIONS_MOBILE_MAPS = 'BUSINESS_IMPRESSIONS_MOBILE_MAPS',
+    BUSINESS_IMPRESSIONS_MOBILE_SEARCH = 'BUSINESS_IMPRESSIONS_MOBILE_SEARCH',
+    BUSINESS_CONVERSATIONS = 'BUSINESS_CONVERSATIONS',
+    BUSINESS_DIRECTION_REQUESTS = 'BUSINESS_DIRECTION_REQUESTS',
+    CALL_CLICKS = 'CALL_CLICKS',
+    WEBSITE_CLICKS = 'WEBSITE_CLICKS',
+    BUSINESS_BOOKINGS = 'BUSINESS_BOOKINGS',
+    BUSINESS_FOOD_ORDERS = 'BUSINESS_FOOD_ORDERS',
+    BUSINESS_FOOD_MENU_CLICKS = 'BUSINESS_FOOD_MENU_CLICKS',
 }
 
 type GetInsightsOptions = {
@@ -64,16 +64,22 @@ export const getInsights = async (client: AxiosInstance, options: GetInsightsOpt
         .then((data) => {
             return data.multiDailyMetricTimeSeries.flatMap((multiDailyMetrics) => {
                 return multiDailyMetrics.dailyMetricTimeSeries.flatMap((metric) => {
-                    return metric.timeSeries.datedValues.map(({ date, value }) => ({
-                        location_id: locationId,
-                        metric: metric.dailyMetric,
-                        date: dayjs()
-                            .year(date.year)
-                            .month(date.month - 1)
-                            .date(date.day)
-                            .format('YYYY-MM-DD'),
-                        value,
-                    }));
+                    return metric.timeSeries.datedValues
+                        .map(({ date, value }) => {
+                            return (
+                                value && {
+                                    location_id: locationId,
+                                    metric: metric.dailyMetric,
+                                    date: dayjs()
+                                        .year(date.year)
+                                        .month(date.month - 1)
+                                        .date(date.day)
+                                        .format('YYYY-MM-DD'),
+                                    value,
+                                }
+                            );
+                        })
+                        .filter((value) => !!value) as Record<string, any>[];
                 });
             });
         })
