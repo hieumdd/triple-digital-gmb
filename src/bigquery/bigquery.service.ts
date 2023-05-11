@@ -5,11 +5,6 @@ import ndjson from 'ndjson';
 import { BigQuery, TableSchema } from '@google-cloud/bigquery';
 import dayjs from 'dayjs';
 
-type AddBatchedAtOptions = {
-    rows: Record<string, any>[];
-    schema: Record<string, any>[];
-};
-
 type LoadOptions = {
     table: string;
     schema: Record<string, any>[];
